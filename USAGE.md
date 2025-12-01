@@ -1,5 +1,7 @@
 # AWS Trading Platform - Usage Guide
 
+This document provides detailed usage instructions for the AWS Trading Platform infrastructure. For high-level architecture and features, refer to the [README.md](README.md) file.
+
 ## 📋 Prerequisites
 
 - **AWS Account** with appropriate IAM permissions
@@ -26,9 +28,14 @@ terraform init
 ### 3. Configure Variables
 
 ```bash
-cp terraform.tfvars.example terraform.tfvars
-# Edit with your environment settings
+# Choose environment directory
+cd environments/prod-with-dr
+
+# Review and edit terraform.tfvars with your environment settings
+vim terraform.tfvars
 ```
+
+Ensure all required variables are set in the terraform.tfvars file to avoid being prompted during deployment.
 
 ### 4. Deploy Infrastructure
 
@@ -39,6 +46,28 @@ terraform plan -out=tfplan
 # Apply changes (takes 20-30 minutes)
 terraform apply "tfplan"
 ```
+
+### Deploying Different Environments
+
+The project supports these deployment environments:
+
+1. **Development Environment**
+   ```bash
+   cd environments/dev
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+2. **Production with Disaster Recovery**
+   ```bash
+   cd environments/prod-with-dr
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+We recommend using the combined prod-with-dr environment to ensure proper configuration synchronization between production and DR regions.
 
 ## 🔍 Accessing the Cluster
 
@@ -245,13 +274,23 @@ kubectl get pods --all-namespaces
    ```bash
    # Check node status
    kubectl get nodes -o wide
-   
+
    # Check node events
    kubectl describe node <node-name>
-   
+
    # Check node logs
    kubectl logs -n kube-system <pod-name>
    ```
+
+4. **DR Environment Failing When Deployed Separately**
+   - Error: `Unable to find remote state` or `couldn't find resource`
+   - Solution: Always use the combined `prod-with-dr` environment
+   - Alternative: Deploy production first, then DR
+
+5. **Missing Variables During Plan/Apply**
+   - Ensure all required variables are in your `terraform.tfvars` file
+   - Run terraform from the correct environment directory
+   - If needed, explicitly reference the tfvars file with `-var-file=terraform.tfvars`
 
 ## Cleanup
 

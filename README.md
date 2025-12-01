@@ -73,7 +73,7 @@ graph TD
 
 ## 🛠️ Getting Started
 
-For detailed deployment and usage instructions, please refer to the [USAGE.md](USAGE.md) documentation.
+For detailed deployment and usage instructions, please refer to the [USAGE.md](USAGE.md) documentation. The project follows specific deployment best practices outlined in the "Deployment Strategy" section below.
 
 ## 📄 License
 
@@ -213,6 +213,44 @@ CloudFormation Guard provides additional policy validation with custom organizat
 - CloudWatch logs encryption requirements
 
 All security scans run automatically in CI/CD pipelines.
+
+## Deployment Strategy
+
+### Environment Structure
+
+The project is structured with these environments:
+
+1. **Development (`environments/dev/`)**: For development and testing
+2. **Production with DR (`environments/prod-with-dr/`)**: Combined production and disaster recovery deployment
+
+### Recommended Deployment Approach
+
+#### For New Deployments
+
+We recommend using the `prod-with-dr` combined environment for all new deployments. This ensures that:
+
+- Production and DR are always deployed together
+- Configuration stays synchronized between environments
+- DR is always available and properly configured for failover
+- No risk of configuration drift between prod and DR
+
+```bash
+cd environments/prod-with-dr
+terraform init
+terraform apply
+```
+
+### Variable Management
+
+All variables are defined in each environment's `terraform.tfvars` file:
+
+- `environments/dev/terraform.tfvars` - Development variables
+- `environments/prod-with-dr/terraform.tfvars` - Production and DR variables
+
+This approach ensures:
+- **No Prompts**: All variables have values defined in terraform.tfvars
+- **Automatic Loading**: terraform.tfvars is automatically loaded without flags
+- **Environment Isolation**: Each environment has its own complete set of values
 
 ## Documentation
 

@@ -376,14 +376,14 @@ resource "aws_route53_health_check" "dr" {
   }
 }
 
-# Route 53 Hosted Zone (assuming it exists already)
-data "aws_route53_zone" "main" {
+# Route 53 Hosted Zone
+resource "aws_route53_zone" "main" {
   name = var.dns_zone_name
 }
 
 # Route 53 Failover Record Set for the application
 resource "aws_route53_record" "app_failover" {
-  zone_id = data.aws_route53_zone.main.zone_id
+  zone_id = aws_route53_zone.main.zone_id
   name    = var.application_domain
   type    = "A"
 
@@ -402,7 +402,7 @@ resource "aws_route53_record" "app_failover" {
 }
 
 resource "aws_route53_record" "app_failover_dr" {
-  zone_id = data.aws_route53_zone.main.zone_id
+  zone_id = aws_route53_zone.main.zone_id
   name    = var.application_domain
   type    = "A"
 
@@ -687,7 +687,7 @@ resource "aws_lambda_function" "dr_failover" {
     variables = {
       PRIMARY_REGION     = var.aws_region
       DR_REGION          = var.dr_region
-      HOSTED_ZONE_ID     = data.aws_route53_zone.main.zone_id
+      HOSTED_ZONE_ID     = aws_route53_zone.main.zone_id
       APPLICATION_DOMAIN = var.application_domain
     }
   }

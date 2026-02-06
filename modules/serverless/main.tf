@@ -37,6 +37,10 @@ resource "aws_dynamodb_table" "main" {
     type = "S"
   }
 
+  point_in_time_recovery {
+    enabled = true
+  }
+
   tags = {
     Name = "${var.project_name}-dynamodb-table"
   }

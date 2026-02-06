@@ -562,6 +562,10 @@ resource "aws_dynamodb_table" "primary" {
     enabled        = true
   }
 
+  point_in_time_recovery {
+    enabled = true
+  }
+
   tags = {
     Name = "${var.project_name}-session-store"
   }
@@ -583,6 +587,10 @@ resource "aws_dynamodb_table" "dr" {
   ttl {
     attribute_name = "TimeToExist"
     enabled        = true
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 
   tags = {

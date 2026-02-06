@@ -190,15 +190,16 @@ resource "aws_security_group" "dr_rds" {
 
 # DR RDS Read Replica (Pilot Light)
 resource "aws_db_instance" "dr_replica" {
-  provider                   = aws.dr_region
-  identifier                 = "${var.project_name}-dr-database"
-  replicate_source_db        = aws_db_instance.main.arn
-  instance_class             = "db.t3.micro" # Smaller instance for cost efficiency
-  vpc_security_group_ids     = [aws_security_group.dr_rds.id]
-  db_subnet_group_name       = aws_db_subnet_group.dr.name
-  skip_final_snapshot        = true
-  auto_minor_version_upgrade = true
-
+  provider                       = aws.dr_region
+  identifier                     = "${var.project_name}-dr-database"
+  replicate_source_db            = aws_db_instance.main.arn
+  instance_class                 = "db.t3.micro" # Smaller instance for cost efficiency
+  vpc_security_group_ids         = [aws_security_group.dr_rds.id]
+  db_subnet_group_name           = aws_db_subnet_group.dr.name
+  skip_final_snapshot            = true
+  auto_minor_version_upgrade     = true
+  iam_database_authentication_enabled = true
+  
   # For a pilot light setup, consider:
   multi_az                = false # Can be true for higher DR reliability
   backup_retention_period = 5     # Fewer days than primary 

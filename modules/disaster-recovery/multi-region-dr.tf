@@ -483,8 +483,7 @@ resource "aws_eks_cluster" "dr" {
   vpc_config {
     subnet_ids              = aws_subnet.dr_private[*].id
     endpoint_private_access = true
-    endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"] # Consider restricting in production
+    endpoint_public_access  = false # Disable public access for better security
     security_group_ids      = [aws_security_group.dr_eks_cluster.id]
   }
 

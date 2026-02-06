@@ -23,3 +23,27 @@ variable "project_name" {
   type        = string
   default     = "aws-learning"
 }
+
+variable "eks_node_desired_size" {
+  description = "Desired number of EKS nodes"
+  type        = number
+  default     = 2
+}
+
+variable "eks_node_max_size" {
+  description = "Maximum number of EKS nodes"
+  type        = number
+  default     = 10
+}
+
+variable "eks_node_min_size" {
+  description = "Minimum number of EKS nodes"
+  type        = number
+  default     = 1
+}
+
+variable "eks_node_instance_types" {
+  description = "Instance types for EKS node group"
+  type        = list(string)
+  default     = ["t3.medium"]
+}

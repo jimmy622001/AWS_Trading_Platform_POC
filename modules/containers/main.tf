@@ -57,14 +57,14 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "${var.project_name}-nodes"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = var.private_subnet_ids
-  instance_types  = ["t3.medium"]
+  instance_types  = var.eks_node_instance_types
   capacity_type   = "ON_DEMAND"
   ami_type        = "AL2_x86_64"
-
+  
   scaling_config {
-    desired_size = 2
-    max_size     = 10
-    min_size     = 1
+    desired_size = var.eks_node_desired_size
+    max_size     = var.eks_node_max_size
+    min_size     = var.eks_node_min_size
   }
 
   update_config {

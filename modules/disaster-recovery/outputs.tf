@@ -53,3 +53,18 @@ output "route53_dns_failover" {
   description = "Indicates that Route 53 DNS failover is configured"
   value       = "Primary: ${var.primary_endpoint_domain}, Secondary: ${var.dr_endpoint_domain}"
 }
+
+output "kms_key_arn" {
+  description = "ARN of the KMS key used for encryption"
+  value       = var.kms_key_arn
+}
+
+output "spot_to_ondemand_function_arn" {
+  description = "ARN of the Lambda function that converts spot to on-demand instances"
+  value       = aws_lambda_function.spot_to_ondemand.arn
+}
+
+output "revert_to_spot_function_arn" {
+  description = "ARN of the Lambda function that reverts to spot instances"
+  value       = aws_lambda_function.revert_to_spot.arn
+}

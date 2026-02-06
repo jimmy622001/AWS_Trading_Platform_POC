@@ -32,3 +32,8 @@ output "cluster_autoscaler_role_arn" {
   description = "ARN of the cluster autoscaler IAM role"
   value       = aws_iam_role.cluster_autoscaler.arn
 }
+
+output "eks_cluster_alb_name" {
+  description = "Name of the ALB associated with the EKS cluster"
+  value       = "${aws_eks_cluster.main.name}-alb"
+}

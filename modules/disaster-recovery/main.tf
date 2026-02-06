@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # AWS Backup Vault
 resource "aws_backup_vault" "main" {
   name        = "${var.project_name}-backup-vault"

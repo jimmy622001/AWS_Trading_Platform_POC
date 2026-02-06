@@ -199,7 +199,8 @@ resource "aws_db_instance" "dr_replica" {
   skip_final_snapshot            = true
   auto_minor_version_upgrade     = true
   iam_database_authentication_enabled = true
-  
+  storage_encrypted              = true
+
   # For a pilot light setup, consider:
   multi_az                = false # Can be true for higher DR reliability
   backup_retention_period = 5     # Fewer days than primary 

@@ -167,7 +167,7 @@ resource "aws_cloudwatch_event_rule" "dr_alert_high_severity" {
   description = "Triggered when a high severity alert is received"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudwatch"],
+    source        = ["aws.cloudwatch"],
     "detail-type" = ["CloudWatch Alarm State Change"],
     detail = {
       state = {
@@ -191,7 +191,7 @@ resource "aws_cloudwatch_event_rule" "dr_alert_resolved" {
   description = "Triggered when a high severity alert is resolved"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudwatch"],
+    source        = ["aws.cloudwatch"],
     "detail-type" = ["CloudWatch Alarm State Change"],
     detail = {
       state = {

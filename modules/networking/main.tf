@@ -9,6 +9,59 @@ resource "aws_vpc" "main" {
   }
 }
 
+# VPC Flow Logs for network monitoring
+resource "aws_flow_log" "main" {
+  iam_role_arn    = aws_iam_role.vpc_flow_log_role.arn
+  log_destination = aws_cloudwatch_log_group.vpc_flow_log.arn
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.project_name}-vpc-flow-log"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "vpc_flow_log" {
+  name              = "/aws/vpc/flowlog/${var.project_name}"
+  retention_in_days = 30
+  kms_key_id        = aws_kms_key.vpc_flow_log.arn
+
+  tags = {
+    Name = "${var.project_name}-vpc-flow-log-group"
+  }
+}
+
+resource "aws_kms_key" "vpc_flow_log" {
+  description             = "KMS key for VPC Flow Logs encryption"
+  deletion_window_in_days = 7
+
+  tags = {
+    Name = "${var.project_name}-vpc-flow-log-key"
+  }
+}
+
+resource "aws_iam_role" "vpc_flow_log_role" {
+  name = "${var.project_name}-vpc-flow-log-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "vpc-flow-logs.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "vpc_flow_log_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonVPCFlowLogsFullAccess"
+  role       = aws_iam_role.vpc_flow_log_role.name
+}
+
 # Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id

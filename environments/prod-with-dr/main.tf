@@ -131,7 +131,7 @@ module "route53_failover" {
   dr_region        = var.dr_region
   domain_name      = var.domain_name
   primary_alb_name = "${module.prod.eks_cluster_name}-alb" # Constructing ALB name from cluster name
-  dr_alb_name      = "${module.dr.eks_cluster_name}-alb" # Constructing ALB name from cluster name
+  dr_alb_name      = "${module.dr.eks_cluster_name}-alb"   # Constructing ALB name from cluster name
   project_name     = var.project_name
   environment      = var.environment
   dr_environment   = local.dr_environment

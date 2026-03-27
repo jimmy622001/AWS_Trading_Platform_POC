@@ -16,9 +16,15 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Environment = var.environment
-      Project     = var.project_name
-      ManagedBy   = "terraform"
+      Environment        = var.environment
+      Project            = var.project_name
+      ManagedBy          = "terraform"
+      CostCenter         = "trading-platform"
+      Owner              = "platform-team"
+      BackupSchedule     = "daily"
+      DataClassification = "confidential"
+      ComplianceLevel    = "high"
+      AutoShutdown       = "false"
     }
   }
 }
@@ -80,11 +86,11 @@ module "containers" {
   private_subnet_ids = module.networking.private_subnet_ids
   security_group_id  = module.security.eks_security_group_id
   project_name       = var.project_name
-  
+
   # Environment-specific EKS scaling
-  eks_node_desired_size = var.eks_node_desired_size
-  eks_node_max_size     = var.eks_node_max_size
-  eks_node_min_size     = var.eks_node_min_size
+  eks_node_desired_size   = var.eks_node_desired_size
+  eks_node_max_size       = var.eks_node_max_size
+  eks_node_min_size       = var.eks_node_min_size
   eks_node_instance_types = var.eks_node_instance_types
 }
 

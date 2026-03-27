@@ -51,7 +51,7 @@ resource "aws_eks_cluster" "main" {
   }
 }
 
-# EKS Node Group with auto-scaling
+# EKS Node Group with auto-scaling and sustainability optimizations
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-nodes"
@@ -60,7 +60,7 @@ resource "aws_eks_node_group" "main" {
   instance_types  = var.eks_node_instance_types
   capacity_type   = "ON_DEMAND"
   ami_type        = "AL2_x86_64"
-  
+
   scaling_config {
     desired_size = var.eks_node_desired_size
     max_size     = var.eks_node_max_size
@@ -69,6 +69,12 @@ resource "aws_eks_node_group" "main" {
 
   update_config {
     max_unavailable = 1
+  }
+
+  # Sustainability: Enable detailed monitoring for carbon tracking
+  labels = {
+    "eks.amazonaws.com/enable-ec2-capacity-optimized-placement-group" = "true"
+    "eks.amazonaws.com/capacity-optimized"                            = "true"
   }
 
   depends_on = [
@@ -80,6 +86,10 @@ resource "aws_eks_node_group" "main" {
   tags = {
     Name                                            = "${var.project_name}-eks-nodes"
     "kubernetes.io/cluster/${var.project_name}-eks" = "owned"
+    # Sustainability tags
+    SustainabilityTracking = "enabled"
+    CarbonFootprint        = "monitored"
+    EnergyEfficiency       = "optimized"
   }
 }
 

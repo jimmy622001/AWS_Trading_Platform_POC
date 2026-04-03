@@ -73,3 +73,34 @@ variable "eks_node_min_size" {
   description = "Minimum number of EKS nodes"
   type        = number
 }
+
+
+# DR Configuration Variables
+variable "dr_region" {
+  description = "Disaster recovery AWS region"
+  type        = string
+}
+
+variable "dr_alb_name" {
+  description = "DR region ALB name"
+  type        = string
+}
+
+variable "rto_threshold_seconds" {
+  description = "Recovery Time Objective threshold in seconds"
+  type        = number
+  default     = 300
+}
+
+variable "rpo_threshold_seconds" {
+  description = "Recovery Point Objective threshold in seconds"
+  type        = number
+  default     = 60
+}
+
+# Caching Variables
+variable "redis_auth_token" {
+  description = "Redis authentication token"
+  type        = string
+  sensitive   = true
+}

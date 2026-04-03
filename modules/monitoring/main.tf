@@ -182,8 +182,6 @@ resource "aws_ce_anomaly_subscription" "main" {
     type    = "SNS"
     address = aws_sns_topic.alerts.arn
   }
-
-  threshold = 100.0
 }
 
 # Budget Alerts

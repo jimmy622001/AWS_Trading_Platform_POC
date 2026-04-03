@@ -121,3 +121,56 @@ module "observability" {
   eks_cluster_name   = module.containers.eks_cluster_name
   project_name       = var.project_name
 }
+
+module "load_balancing" {
+  source = "../../modules/load-balancing"
+
+  vpc_id            = module.networking.vpc_id
+  public_subnet_ids = module.networking.public_subnet_ids
+  project_name      = var.project_name
+}
+
+module "prometheus_grafana" {
+  source = "../../modules/prometheus-grafana"
+
+  grafana_admin_password = var.grafana_admin_password
+}
+
+module "threat_detection" {
+  source = "../../modules/threat-detection"
+
+  project_name = var.project_name
+}
+
+module "caching" {
+  source = "../../modules/caching"
+
+  vpc_id                = module.networking.vpc_id
+  private_subnet_ids    = module.networking.private_subnet_ids
+  eks_security_group_id = module.security.eks_security_group_id
+  project_name          = var.project_name
+  redis_auth_token      = var.redis_auth_token
+  sns_topic_arn         = module.threat_detection.security_alerts_topic_arn
+}
+
+module "trading_optimizations" {
+  source = "../../modules/trading-optimizations"
+
+  private_subnet_ids    = module.networking.private_subnet_ids
+  eks_security_group_id = module.security.eks_security_group_id
+  project_name          = var.project_name
+  sns_topic_arn         = module.threat_detection.security_alerts_topic_arn
+}
+
+module "dr_automation" {
+  source = "../../modules/dr-automation"
+
+  project_name       = var.project_name
+  primary_region     = var.aws_region
+  dr_region          = var.dr_region
+  sns_topic_arn      = module.threat_detection.security_alerts_topic_arn
+  primary_alb_name   = module.load_balancing.primary_alb_name
+  dr_alb_name        = var.dr_alb_name
+  rto_threshold_seconds = var.rto_threshold_seconds
+  rpo_threshold_seconds = var.rpo_threshold_seconds
+}

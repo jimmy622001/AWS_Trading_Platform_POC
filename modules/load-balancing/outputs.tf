@@ -47,3 +47,14 @@ output "nlb_security_group_id" {
   description = "Security group ID for NLB"
   value       = aws_security_group.nlb.id
 }
+
+
+output "primary_alb_name" {
+  description = "Name of the primary Application Load Balancer"
+  value       = aws_lb.main.name
+}
+
+output "primary_alb_arn" {
+  description = "ARN of the primary Application Load Balancer"
+  value       = aws_lb.main.arn
+}

@@ -21,13 +21,11 @@ variable "project_name" {
 variable "cache_node_type" {
   description = "ElastiCache node type"
   type        = string
-  default     = "cache.r6g.large"
 }
 
 variable "cache_num_nodes" {
   description = "Number of cache nodes"
   type        = number
-  default     = 2
 }
 
 variable "redis_auth_token" {

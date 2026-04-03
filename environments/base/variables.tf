@@ -89,13 +89,11 @@ variable "dr_alb_name" {
 variable "rto_threshold_seconds" {
   description = "Recovery Time Objective threshold in seconds"
   type        = number
-  default     = 300
 }
 
 variable "rpo_threshold_seconds" {
   description = "Recovery Point Objective threshold in seconds"
   type        = number
-  default     = 60
 }
 
 # Caching Variables
@@ -103,4 +101,42 @@ variable "redis_auth_token" {
   description = "Redis authentication token"
   type        = string
   sensitive   = true
+}
+
+
+# Caching Configuration
+variable "cache_node_type" {
+  description = "ElastiCache node type"
+  type        = string
+}
+
+variable "cache_num_nodes" {
+  description = "Number of cache nodes"
+  type        = number
+}
+
+# Trading Optimizations Configuration
+variable "trading_instance_type" {
+  description = "EC2 instance type for trading engines"
+  type        = string
+}
+
+variable "trading_cpu_cores" {
+  description = "Number of CPU cores for trading instances"
+  type        = number
+}
+
+variable "trading_min_size" {
+  description = "Minimum number of trading engine instances"
+  type        = number
+}
+
+variable "trading_max_size" {
+  description = "Maximum number of trading engine instances"
+  type        = number
+}
+
+variable "trading_desired_size" {
+  description = "Desired number of trading engine instances"
+  type        = number
 }

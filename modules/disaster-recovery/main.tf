@@ -100,7 +100,7 @@ resource "aws_db_instance" "main" {
 
   db_name  = "learningdb"
   username = "admin"
-  password = "changeme123!" # Use AWS Secrets Manager in production
+  password = var.rds_master_password
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.main.name

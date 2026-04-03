@@ -16,5 +16,4 @@ variable "lambda_role_arn" {
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
-  default     = "aws-learning"
 }

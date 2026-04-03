@@ -149,6 +149,8 @@ module "caching" {
   private_subnet_ids    = module.networking.private_subnet_ids
   eks_security_group_id = module.security.eks_security_group_id
   project_name          = var.project_name
+  cache_node_type       = var.cache_node_type
+  cache_num_nodes       = var.cache_num_nodes
   redis_auth_token      = var.redis_auth_token
   sns_topic_arn         = module.threat_detection.security_alerts_topic_arn
 }
@@ -156,10 +158,15 @@ module "caching" {
 module "trading_optimizations" {
   source = "../../modules/trading-optimizations"
 
-  private_subnet_ids    = module.networking.private_subnet_ids
-  eks_security_group_id = module.security.eks_security_group_id
-  project_name          = var.project_name
-  sns_topic_arn         = module.threat_detection.security_alerts_topic_arn
+  private_subnet_ids      = module.networking.private_subnet_ids
+  eks_security_group_id   = module.security.eks_security_group_id
+  project_name            = var.project_name
+  trading_instance_type   = var.trading_instance_type
+  trading_cpu_cores       = var.trading_cpu_cores
+  trading_min_size        = var.trading_min_size
+  trading_max_size        = var.trading_max_size
+  trading_desired_size    = var.trading_desired_size
+  sns_topic_arn           = module.threat_detection.security_alerts_topic_arn
 }
 
 module "dr_automation" {

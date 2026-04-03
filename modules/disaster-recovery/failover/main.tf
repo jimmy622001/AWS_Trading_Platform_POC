@@ -28,7 +28,7 @@ resource "aws_route53_record" "primary" {
   set_identifier = "primary"
   alias {
     name                   = "${var.primary_alb_name}.${var.primary_region}.elb.amazonaws.com"
-    zone_id                = "Z35SXDOTRQ7X7K" # Fixed ALB zone ID for all regions
+    zone_id                = var.primary_alb_zone_id
     evaluate_target_health = true
   }
 
@@ -47,7 +47,7 @@ resource "aws_route53_record" "secondary" {
   set_identifier = "secondary"
   alias {
     name                   = "${var.dr_alb_name}.${var.dr_region}.elb.amazonaws.com"
-    zone_id                = "Z35SXDOTRQ7X7K" # Fixed ALB zone ID for all regions
+    zone_id                = var.dr_alb_zone_id
     evaluate_target_health = true
   }
 }

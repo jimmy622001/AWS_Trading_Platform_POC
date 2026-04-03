@@ -31,11 +31,9 @@ variable "dr_alb_name" {
 variable "rto_threshold_seconds" {
   description = "Recovery Time Objective threshold in seconds"
   type        = number
-  default     = 300
 }
 
 variable "rpo_threshold_seconds" {
   description = "Recovery Point Objective threshold in seconds"
   type        = number
-  default     = 60
 }

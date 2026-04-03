@@ -37,3 +37,14 @@ variable "dr_environment" {
   description = "DR Environment name"
   type        = string
 }
+
+
+variable "primary_alb_zone_id" {
+  description = "Route 53 zone ID for the primary ALB"
+  type        = string
+}
+
+variable "dr_alb_zone_id" {
+  description = "Route 53 zone ID for the DR ALB"
+  type        = string
+}

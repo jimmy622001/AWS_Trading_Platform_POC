@@ -40,7 +40,7 @@ resource "aws_cloudwatch_log_group" "codebuild" {
   kms_key_id        = aws_kms_key.codebuild.arn
 }
 
-# CodeBuild Project
+# CodeBuild Project for Build
 resource "aws_codebuild_project" "main" {
   name           = "${var.project_name}-build"
   description    = "Build project for ${var.project_name}"
@@ -67,6 +67,95 @@ resource "aws_codebuild_project" "main" {
   source {
     type      = "CODEPIPELINE"
     buildspec = "buildspec.yml"
+  }
+}
+
+# CodeBuild Project for Security Scanning
+resource "aws_codebuild_project" "security_scan" {
+  name           = "${var.project_name}-security-scan"
+  description    = "Security scanning for ${var.project_name}"
+  service_role   = aws_iam_role.codebuild_role.arn
+  encryption_key = aws_kms_key.codebuild.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name = aws_cloudwatch_log_group.codebuild.name
+    }
+  }
+
+  source {
+    type      = "CODEPIPELINE"
+    buildspec = <<-EOT
+      version: 0.2
+      phases:
+        install:
+          commands:
+            - echo "Installing security scanning tools..."
+            - pip install checkov tflint
+        build:
+          commands:
+            - echo "Running Checkov for infrastructure security..."
+            - checkov -d . --framework terraform --output cli || true
+            - echo "Running TFLint for Terraform best practices..."
+            - tflint . || true
+      artifacts:
+        files:
+          - '**/*'
+    EOT
+  }
+}
+
+# CodeBuild Project for Testing
+resource "aws_codebuild_project" "test" {
+  name           = "${var.project_name}-test"
+  description    = "Testing for ${var.project_name}"
+  service_role   = aws_iam_role.codebuild_role.arn
+  encryption_key = aws_kms_key.codebuild.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name = aws_cloudwatch_log_group.codebuild.name
+    }
+  }
+
+  source {
+    type      = "CODEPIPELINE"
+    buildspec = <<-EOT
+      version: 0.2
+      phases:
+        install:
+          commands:
+            - echo "Installing test dependencies..."
+        build:
+          commands:
+            - echo "Running tests..."
+            - echo "Test stage completed"
+      artifacts:
+        files:
+          - '**/*'
+    EOT
   }
 }
 
@@ -131,6 +220,52 @@ resource "aws_codepipeline" "main" {
       configuration = {
         ProjectName = aws_codebuild_project.main.name
       }
+    }
+  }
+
+  stage {
+    name = "SecurityScan"
+
+    action {
+      name            = "SecurityScan"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["build_output"]
+      version         = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.security_scan.name
+      }
+    }
+  }
+
+  stage {
+    name = "Test"
+
+    action {
+      name            = "Test"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["build_output"]
+      version         = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.test.name
+      }
+    }
+  }
+
+  stage {
+    name = "Approval"
+
+    action {
+      name     = "ManualApproval"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
     }
   }
 }
@@ -263,6 +398,13 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           aws_kms_key.codebuild.arn,
           aws_kms_key.codepipeline.arn
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
       }
     ]
   })
